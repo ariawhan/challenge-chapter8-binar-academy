@@ -14,7 +14,12 @@ module.exports = {
     host: DB_HOST,
     port: DB_PORT,
     dialect: "postgres",
-    ssl: true
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      },
+    }
   },
   test: {
     username: DB_USER,
