@@ -13,7 +13,8 @@ module.exports = {
     database: `${DB_NAME}`,
     host: DB_HOST,
     port: DB_PORT,
-    dialect: "postgres"
+    dialect: "postgres",
+    ssl: true
   },
   test: {
     username: DB_USER,
