@@ -17,7 +17,6 @@ jobs:
           heroku_email: ${{secrets.HEROKU_EMAIL}}
           dontuseforce: true
           dontautocreate: true
-          procfile: "web: npm start"
         env:
           HD_JWT_SIGNATURE_KEY: ${{secrets.JWT_SIGNATURE_KEY}}
           HD_DB_USER: ${{secrets.DB_USER}}
