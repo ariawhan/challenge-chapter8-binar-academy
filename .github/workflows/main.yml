@@ -17,4 +17,14 @@ jobs:
           heroku_email: ${{secrets.HEROKU_EMAIL}}
           dontuseforce: true
           procfile: "web: npm start"
+          env_file: ".env"
+        env:
+          JWT_SIGNATURE_KEY: ${{secrets.JWT_SIGNATURE_KEY}}
+          DB_USER: ${{secrets.DB_USER}}
+          DB_PASSWORD: ${{secrets.DB_PASSWORD}}
+          DB_NAME: ${{secrets.DB_NAME}}
+          DB_HOST: ${{secrets.DB_HOST}}
+          DB_PORT: "5432"
+
+
           
