@@ -1,5 +1,5 @@
-const { Op } = require("sequelize");
-const ApplicationController = require("./ApplicationController");
+const { Op } = require('sequelize');
+const ApplicationController = require('./ApplicationController');
 
 class CarController extends ApplicationController {
   constructor({ carModel, userCarModel, dayjs }) {
@@ -10,26 +10,26 @@ class CarController extends ApplicationController {
   }
 
   handleListCars = async (req, res) => {
-    const offset = this.getOffsetFromRequest(req);
-    const limit = req.query.pageSize;
+    // const offset = this.getOffsetFromRequest(req);
+    // const limit = req.query.pageSize;
     const query = this.getListQueryFromRequest(req);
     const cars = await this.carModel.findAll(query);
-    const carCount = await this.carModel.count({ where: query.where, include: query.include, });
+    const carCount = await this.carModel.count({ where: query.where, include: query.include });
     const pagination = this.buildPaginationObject(req, carCount);
 
     res.status(200).json({
       cars,
       meta: {
         pagination,
-      }
+      },
     });
-  }
+  };
 
   handleGetCar = async (req, res) => {
-    const car = await this.getCarFromRequest(req); 
+    const car = await this.getCarFromRequest(req);
 
     res.status(200).json(car);
-  }
+  };
 
   handleCreateCar = async (req, res) => {
     try {
@@ -49,24 +49,24 @@ class CarController extends ApplicationController {
       });
 
       res.status(201).json(car);
-    }
-
-    catch(err) {
+    } catch (err) {
       res.status(422).json({
         error: {
           name: err.name,
           message: err.message,
-        }
+        },
       });
     }
-  }
+  };
 
   handleRentCar = async (req, res, next) => {
     try {
-      let { rentStartedAt, rentEndedAt } = req.body;
-      const car = await this.getCarFromRequest(req)
+      const { rentStartedAt, rentEndedAt } = req.body;
+      const car = await this.getCarFromRequest(req);
 
-      if (!rentEndedAt) rentEndedAt = this.dayjs(rentStartedAt).add(1, "day");
+      if (!rentEndedAt) {
+        rentEndedAt = this.dayjs(rentStartedAt).add(1, 'day');
+      }
 
       const activeRent = await this.userCarModel.findOne({
         where: {
@@ -75,14 +75,14 @@ class CarController extends ApplicationController {
             [Op.gte]: rentStartedAt,
           },
           rentEndedAt: {
-            [Op.lte]: rentEndedAt, 
-          }
-        }
+            [Op.lte]: rentEndedAt,
+          },
+        },
       });
 
-      if (!!activeRent) {
+      if (activeRent) {
         const err = new CarAlreadyRentedError(car);
-        res.status(422).json(err)
+        res.status(422).json(err);
         return;
       }
 
@@ -93,13 +93,11 @@ class CarController extends ApplicationController {
         rentEndedAt,
       });
 
-      res.status(201).json(userCar)
-    }
-
-    catch(err) {
+      res.status(201).json(userCar);
+    } catch (err) {
       next(err);
     }
-  }
+  };
 
   handleUpdateCar = async (req, res) => {
     try {
@@ -121,22 +119,20 @@ class CarController extends ApplicationController {
       });
 
       res.status(200).json(car);
-    }
-
-    catch(err) {
+    } catch (err) {
       res.status(422).json({
         error: {
           name: err.name,
           message: err.message,
-        }
+        },
       });
     }
-  }
+  };
 
   handleDeleteCar = async (req, res) => {
-    const car = await this.carModel.destroy(req.params.id); 
+    // const car = await this.carModel.destroy(req.params.id);
     res.status(204).end();
-  }
+  };
 
   getCarFromRequest(req) {
     return this.carModel.findByPk(req.params.id);
@@ -149,17 +145,17 @@ class CarController extends ApplicationController {
     const where = {};
     const include = {
       model: this.userCarModel,
-      as: "userCar",
+      as: 'userCar',
       required: false,
-    }
+    };
 
-    if (!!size) where.size = size;
-    if (!!availableAt) {
+    if (size) where.size = size;
+    if (availableAt) {
       include.where = {
         rentEndedAt: {
-          [Op.gte]: availableAt, 
-        }
-      }
+          [Op.gte]: availableAt,
+        },
+      };
     }
 
     const query = {

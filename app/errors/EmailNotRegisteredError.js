@@ -1,4 +1,4 @@
-const ApplicationError = require("./ApplicationError");
+const ApplicationError = require('./ApplicationError');
 
 class EmailNotRegisteredError extends ApplicationError {
   constructor(email) {
@@ -7,7 +7,7 @@ class EmailNotRegisteredError extends ApplicationError {
   }
 
   get details() {
-    return { email: this.email }
+    return { email: this.email };
   }
 }
 

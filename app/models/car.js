@@ -1,7 +1,7 @@
-'use strict';
 const {
-  Model
+  Model,
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Car extends Model {
     /**
@@ -11,9 +11,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       this.hasOne(models.UserCar, {
-        foreignKey: "carId",
-        as: "userCar",
-      })
+        foreignKey: 'carId',
+        as: 'userCar',
+      });
     }
 
     // toJSON() {
@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
     price: DataTypes.FLOAT,
     size: DataTypes.STRING,
     image: DataTypes.STRING,
-    isCurrentlyRented: DataTypes.BOOLEAN
+    isCurrentlyRented: DataTypes.BOOLEAN,
   }, {
     sequelize,
     modelName: 'Car',

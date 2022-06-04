@@ -1,4 +1,4 @@
-const ApplicationError = require("./ApplicationError");
+const ApplicationError = require('./ApplicationError');
 
 class CarAlreadyRentedError extends ApplicationError {
   constructor(car) {
@@ -6,7 +6,7 @@ class CarAlreadyRentedError extends ApplicationError {
   }
 
   get details() {
-    return { car }
+    return { car };
   }
 }
 
