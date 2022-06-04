@@ -16,8 +16,8 @@ jobs:
           heroku_app_name: "challenge-chapter-8-ariawan" #Must be unique in Heroku
           heroku_email: ${{secrets.HEROKU_EMAIL}}
           dontuseforce: true
+          dontautocreate: true
           procfile: "web: npm start"
-          branch: "main"
         env:
           HD_JWT_SIGNATURE_KEY: ${{secrets.JWT_SIGNATURE_KEY}}
           HD_DB_USER: ${{secrets.DB_USER}}
