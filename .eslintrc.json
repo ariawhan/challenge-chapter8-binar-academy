@@ -15,5 +15,11 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "class-methods-use-this": "off",
+        "import/no-dynamic-require": "off",
+        "global-require": "off",
+        "no-unused-vars": "off",
+        "linebreak-style": 0
+       
     }
 }
