@@ -11,9 +11,6 @@
     "parserOptions": {
         "ecmaVersion": "latest"
     },
-    "plugins": [
-        "@typescript-eslint"
-    ],
     "rules": {
         "class-methods-use-this": "off",
         "import/no-dynamic-require": "off",
