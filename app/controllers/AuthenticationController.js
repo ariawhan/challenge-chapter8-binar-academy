@@ -52,6 +52,7 @@ class AuthenticationController extends ApplicationController {
 
   handleLogin = async (req, res, next) => {
     try {
+      console.log(req.body.email)
       const email = req.body.email.toLowerCase();
       const { password } = req.body;
       const user = await this.userModel.findOne({
@@ -85,6 +86,7 @@ class AuthenticationController extends ApplicationController {
 
   handleRegister = async (req, res, next) => {
     try {
+      console.log(req.body.name,req.body.email,req.body.password)
       const { name } = req.body;
       const email = req.body.email.toLowerCase();
       const { password } = req.body;

@@ -1,9 +1,9 @@
 /*
- * For a detailed explanation regarding each configuration property and type check, visit:
+ * For a detailed explanation regarding each configuration property, visit:
  * https://jestjs.io/docs/configuration
  */
 
-export default {
+module.exports = {
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -192,4 +192,5 @@ export default {
 
   // Whether to use watchman for file crawling
   // watchman: true,
+  setupFilesAfterEnv: ['./jest.setup.js']
 };
