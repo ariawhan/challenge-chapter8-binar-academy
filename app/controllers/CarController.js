@@ -116,7 +116,6 @@ class CarController extends ApplicationController {
       const { name, price, size, image } = req.body;
 
       const car = await this.getCarFromRequest(req.params.id);
-      console.log(car);
       const newCar = await this.carModel.update(
         {
           name,
@@ -133,7 +132,7 @@ class CarController extends ApplicationController {
       );
 
       res.status(201).json({
-        message: "succesfully updated",
+        message: "succesfully updated id " + car.id,
         data: await this.getCarFromRequest(req.params.id),
       });
     } catch (err) {
