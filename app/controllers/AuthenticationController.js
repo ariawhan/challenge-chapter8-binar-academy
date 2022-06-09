@@ -1,20 +1,15 @@
-const ApplicationController = require('./ApplicationController');
+const ApplicationController = require("./ApplicationController");
 const {
   EmailNotRegisteredError,
   InsufficientAccessError,
   RecordNotFoundError,
   WrongPasswordError,
   EmailAlreadyTakenError,
-} = require('../errors');
-const { JWT_SIGNATURE_KEY } = require('../../config/application');
+} = require("../errors");
+const { JWT_SIGNATURE_KEY } = require("../../config/application");
 
 class AuthenticationController extends ApplicationController {
-  constructor({
-    userModel,
-    roleModel,
-    bcrypt,
-    jwt,
-  }) {
+  constructor({ userModel, roleModel, bcrypt, jwt }) {
     super();
     this.userModel = userModel;
     this.roleModel = roleModel;
@@ -23,14 +18,14 @@ class AuthenticationController extends ApplicationController {
   }
 
   accessControl = {
-    PUBLIC: 'PUBLIC',
-    ADMIN: 'ADMIN',
-    CUSTOMER: 'CUSTOMER',
+    PUBLIC: "PUBLIC",
+    ADMIN: "ADMIN",
+    CUSTOMER: "CUSTOMER",
   };
 
   authorize = (rolename) => (req, res, next) => {
     try {
-      const token = req.headers.authorization?.split('Bearer ')[1];
+      const token = req.headers.authorization?.split("Bearer ")[1];
       const payload = this.decodeToken(token);
 
       if (!!rolename && rolename !== payload.role.name) {
@@ -52,12 +47,12 @@ class AuthenticationController extends ApplicationController {
 
   handleLogin = async (req, res, next) => {
     try {
-      console.log(req.body.email)
+      // console.log(req.body);
       const email = req.body.email.toLowerCase();
       const { password } = req.body;
       const user = await this.userModel.findOne({
         where: { email },
-        include: [{ model: this.roleModel, attributes: ['id', 'name'] }],
+        include: [{ model: this.roleModel, attributes: ["id", "name"] }],
       });
 
       if (!user) {
@@ -65,18 +60,23 @@ class AuthenticationController extends ApplicationController {
         res.status(404).json(err);
         return;
       }
+      // console.log(password);
+      const isPasswordCorrect = await this.verifyPassword(
+        password,
+        user.encryptedPassword
+      );
 
-      const isPasswordCorrect = this.verifyPassword(password, user.encryptedPassword);
+      // console.log(isPasswordCorrect);
 
       if (!isPasswordCorrect) {
         const err = new WrongPasswordError();
         res.status(401).json(err);
         return;
       }
-
+      console.log(user);
       const accessToken = this.createTokenFromUser(user, user.Role);
-
-      res.status(201).json({
+      console.log(accessToken);
+      res.status(200).json({
         accessToken,
       });
     } catch (err) {
@@ -86,7 +86,7 @@ class AuthenticationController extends ApplicationController {
 
   handleRegister = async (req, res, next) => {
     try {
-      console.log(req.body.name,req.body.email,req.body.password)
+      // console.log(req.body.name, req.body.email, req.body.password);
       const { name } = req.body;
       const email = req.body.email.toLowerCase();
       const { password } = req.body;
@@ -139,16 +139,20 @@ class AuthenticationController extends ApplicationController {
     res.status(200).json(user);
   };
 
-  createTokenFromUser = (user, role) => this.jwt.sign({
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    image: user.image,
-    role: {
-      id: role.id,
-      name: role.name,
-    },
-  }, JWT_SIGNATURE_KEY);
+  createTokenFromUser = (user, role) =>
+    this.jwt.sign(
+      {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        image: user.image,
+        role: {
+          id: role.id,
+          name: role.name,
+        },
+      },
+      JWT_SIGNATURE_KEY
+    );
 
   decodeToken(token) {
     return this.jwt.verify(token, JWT_SIGNATURE_KEY);
@@ -156,8 +160,9 @@ class AuthenticationController extends ApplicationController {
 
   encryptPassword = (password) => this.bcrypt.hashSync(password, 10);
 
-  verifyPassword = (password, encryptedPassword) => {
-    this.bcrypt.compareSync(password, encryptedPassword);
+  verifyPassword = async (password, encryptedPassword) => {
+    // console.log(password, encryptedPassword);
+    return await this.bcrypt.compareSync(password, encryptedPassword);
   };
 }
 

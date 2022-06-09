@@ -12,7 +12,7 @@ describe("POST /v1/auth/register", () => {
     name: "user422",
     email: "user422@gmail.com",
     password: "ariawhan",
-    role: 2,
+    roleId: 2,
   };
   beforeEach(async () => {
     await User.create(user422);
