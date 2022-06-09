@@ -73,9 +73,9 @@ class AuthenticationController extends ApplicationController {
         res.status(401).json(err);
         return;
       }
-      console.log(user);
+      // console.log(user);
       const accessToken = this.createTokenFromUser(user, user.Role);
-      console.log(accessToken);
+      // console.log(accessToken);
       res.status(200).json({
         accessToken,
       });
