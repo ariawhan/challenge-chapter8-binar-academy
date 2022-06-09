@@ -25,7 +25,7 @@ describe("GET /v1/cars", () => {
   //     await Car.destroy({ where: { id: carAfterCreate.id } });
   //   });
 
-  it("should response with 200 as status code (sukses get cars)", async () => {
+  it("should response with 200 as status code (sukses get list cars)", async () => {
     return request(app)
       .get("/v1/cars?page=" + page + "&pageSize=" + pageSize) // request api get cars with page in quary
       .then((res) => {
