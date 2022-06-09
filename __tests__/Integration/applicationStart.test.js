@@ -1,5 +1,5 @@
 const request = require("supertest"); // request with supertest
-const app = require("../app");
+const app = require("../../app");
 
 describe("GET /", () => {
   it("should response with 200 as status code (Application Start)", async () => {
@@ -15,7 +15,6 @@ describe("GET /", () => {
     return request(app)
       .get("/Ap")
       .then((res) => {
-        console.log(res.body);
         expect(res.statusCode).toBe(404); // check toBe 200 status response sukses
         expect(res.body).toEqual({
           error: {

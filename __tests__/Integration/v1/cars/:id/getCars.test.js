@@ -1,6 +1,6 @@
 const request = require("supertest"); // request with supertest
-const app = require("../../../../app"); // app for testing
-const { Car } = require("../../../../app/models"); // user model for authentication
+const app = require("../../../../../app"); // app for testing
+const { Car } = require("../../../../../app/models"); // user model for authentication
 
 describe("GET /v1/cars/:id", () => {
   // data cars for create before it
