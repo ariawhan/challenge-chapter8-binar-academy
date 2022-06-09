@@ -116,7 +116,7 @@ class CarController extends ApplicationController {
       const { name, price, size, image } = req.body;
 
       const car = await this.getCarFromRequest(req.params.id);
-
+      console.log(car);
       const newCar = await this.carModel.update(
         {
           name,
@@ -152,8 +152,8 @@ class CarController extends ApplicationController {
         id: req.params.id,
       },
     });
-    res.status(201).json({
-      message: req.params.id,
+    res.status(200).json({
+      message: "Succesfully delete car id " + req.params.id,
     });
   };
 
