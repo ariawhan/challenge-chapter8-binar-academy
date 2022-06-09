@@ -30,7 +30,7 @@ describe("GET /v1/cars", () => {
       .get("/v1/cars?page=" + page + "&pageSize=" + pageSize) // request api get cars with page in quary
       .then((res) => {
         expect(res.statusCode).toBe(200);
-        expect(res.body).toEqual(
+        expect(res.body.cars).toEqual(
           expect.arrayContaining([
             expect.objectContaining({
               id,
