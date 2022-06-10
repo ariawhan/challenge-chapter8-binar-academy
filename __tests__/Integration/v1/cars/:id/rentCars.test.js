@@ -5,7 +5,7 @@ const { User, Car } = require("../../../../../app/models"); // user model for au
 
 describe("POST /v1/cars/:id/rent", () => {
   //car data
-  const carData = {
+  const carDataRent = {
     name: "Rush 2018",
     price: 600000,
     size: "SMALL",
@@ -19,7 +19,7 @@ describe("POST /v1/cars/:id/rent", () => {
     rentEndedAt: "2022-06-09T15:44:03.156Z",
   };
 
-  let idCars = 0;
+  let idCarsRent = 0;
 
   // password admin and customer
   const password = "Hati-hati-dijalan";
@@ -41,8 +41,8 @@ describe("POST /v1/cars/:id/rent", () => {
     // create user admin and customer and crate car before it
     await User.create(userRentAdmin);
     await User.create(userRentCustomer);
-    const addCar = await Car.create(carData);
-    idCars = addCar.id;
+    const addCar = await Car.create(carDataRent);
+    idCarsRent = addCar.id;
   });
 
   afterEach(async () => {
@@ -60,7 +60,7 @@ describe("POST /v1/cars/:id/rent", () => {
       });
       await Car.destroy({
         where: {
-          id: idCars,
+          id: idCarsRent,
         },
       });
     } catch (err) {
@@ -73,15 +73,14 @@ describe("POST /v1/cars/:id/rent", () => {
       .post("/v1/auth/login") // request api login
       .set("Content-Type", "application/json")
       .send({ email: userRentAdmin.email, password: password }) // need email and password for login userCustomer
-      .then((res) => {
-        request(app)
-          .post("/v1/cars/" + idCars + "/rent") // request api create cars
+      .then(async (res) => {
+        await request(app)
+          .post("/v1/cars/" + idCarsRent + "/rent") // request api create cars
           .set("authorization", "Bearer " + res.body.accessToken) // set authorization jwt
           .send(rentData)
-          .then((res2) => {
-            console.log(res2.body);
-            expect(res2.statusCode).toBe(401); // check status respond
-            expect(res2.body).toEqual({
+          .then(async (res2) => {
+            await expect(res2.statusCode).toBe(401); // check status respond
+            await expect(res2.body).toEqual({
               error: {
                 name: "Error",
                 message: "Access forbidden!",

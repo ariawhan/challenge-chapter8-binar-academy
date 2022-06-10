@@ -82,7 +82,7 @@ describe("POST /v1/auth/login", () => {
         expect(res.statusCode).toBe(404); // check toBe 404 status response not found
         expect(res.body.error.details.email).toEqual(
           emailNotRegistered.toLowerCase()
-        ); // check equal email faild or not registered
+        );
       });
   });
 });

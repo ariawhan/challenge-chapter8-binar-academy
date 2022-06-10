@@ -69,10 +69,7 @@ describe("GET /v1/auth/whoami", () => {
                   reason: "ADMIN is not allowed to perform this operation.",
                 },
               },
-            }); // check error Access forbidden
-          })
-          .catch((err) => {
-            console.error(err.message); //error message;
+            });
           });
       });
   });
@@ -90,9 +87,6 @@ describe("GET /v1/auth/whoami", () => {
             expect(res.statusCode).toBe(200); // check status respond
             expect(res.body.name).toEqual(userCustomer.name); // check name
             expect(res.body.email).toEqual(userCustomer.email.toLowerCase()); // check email
-          })
-          .catch((err) => {
-            console.error(err.message); //error message;
           });
       });
   });

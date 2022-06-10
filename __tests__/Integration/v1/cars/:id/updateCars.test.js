@@ -5,7 +5,7 @@ const { User, Car } = require("../../../../../app/models"); // user model for au
 
 describe("GET /v1/cars/:id", () => {
   //car data
-  const carData = {
+  const carDataUpdate = {
     name: "Rush 2018",
     price: 600000,
     size: "SMALL",
@@ -21,7 +21,7 @@ describe("GET /v1/cars/:id", () => {
     image: "https://source.unsplash.com/502x502",
   };
 
-  let idCars = 0;
+  let idCarsUpdate = 0;
 
   // password admin and customer
   const password = "Hati-hati-dijalan";
@@ -43,8 +43,8 @@ describe("GET /v1/cars/:id", () => {
     // create user admin and customer and crate car before it
     await User.create(userAdmin);
     await User.create(userCustomer);
-    const addCar = await Car.create(carData);
-    idCars = addCar.id;
+    const addCar = await Car.create(carDataUpdate);
+    idCarsUpdate = addCar.id;
   });
 
   afterEach(async () => {
@@ -62,7 +62,7 @@ describe("GET /v1/cars/:id", () => {
       });
       await Car.destroy({
         where: {
-          id: idCars,
+          id: idCarsUpdate,
         },
       });
     } catch (err) {
@@ -75,15 +75,15 @@ describe("GET /v1/cars/:id", () => {
       .post("/v1/auth/login") // request api login
       .set("Content-Type", "application/json")
       .send({ email: userCustomer.email, password: password }) // need email and password for login userCustomer
-      .then((res) => {
-        request(app)
-          .put("/v1/cars/" + idCars) // request api create cars
+      .then(async (res) => {
+        await request(app)
+          .put("/v1/cars/" + idCarsUpdate) // request api create cars
           .set("authorization", "Bearer " + res.body.accessToken) // set authorization jwt
           .send(carUpdate)
-          .then((res2) => {
+          .then(async (res2) => {
             // console.log(res2.body);
-            expect(res2.statusCode).toBe(401); // check status respond
-            expect(res2.body).toEqual({
+            await expect(res2.statusCode).toBe(401); // check status respond
+            await expect(res2.body).toEqual({
               error: {
                 name: "Error",
                 message: "Access forbidden!",
@@ -101,21 +101,20 @@ describe("GET /v1/cars/:id", () => {
       .post("/v1/auth/login") // request api login
       .set("Content-Type", "application/json")
       .send({ email: userAdmin.email, password: password }) // need email and password for login userCustomer
-      .then((res) => {
-        request(app)
-          .put("/v1/cars/" + idCars) // request api create cars
+      .then(async (res) => {
+        await request(app)
+          .put("/v1/cars/" + idCarsUpdate) // request api create cars
           .set("authorization", "Bearer " + res.body.accessToken) // set authorization jwt
           .send(carUpdate)
-          .then((res2) => {
-            expect(res2.statusCode).toBe(201); // check status respond
-            expect(res2.body.message).toEqual(
-              "succesfully updated id " + idCars
+          .then(async (updateCar) => {
+            await expect(updateCar.statusCode).toBe(201); // check status respond
+            await expect(updateCar.body.message).toEqual(
+              "succesfully updated id " + idCarsUpdate
             );
-            expect(res2.body.data.id), toEqual(idCars);
-            expect(res2.body.data.name), toEqual(carUpdate.name);
-            expect(res2.body.data.price), toEqual(carUpdate.price);
-            expect(res2.body.data.size), toEqual(carUpdate.size);
-            expect(res2.body.data.image), toEqual(carUpdate.image);
+            await expect(updateCar.body.data.name).toEqual(carUpdate.name);
+            await expect(updateCar.body.data.price).toEqual(carUpdate.price);
+            await expect(updateCar.body.data.size).toEqual(carUpdate.size);
+            await expect(updateCar.body.data.image).toEqual(carUpdate.image);
           });
       });
   });

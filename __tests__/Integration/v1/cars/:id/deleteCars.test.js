@@ -96,7 +96,6 @@ describe("GET /v1/cars/:id", () => {
           .delete("/v1/cars/" + idCars) // request api create cars
           .set("authorization", "Bearer " + res.body.accessToken) // set authorization jwt
           .then((res2) => {
-            console.log(res2.body);
             expect(res2.statusCode).toBe(200); // check status respond
             expect(res2.body.message).toEqual(
               "Succesfully delete car id " + idCars
