@@ -1,7 +1,7 @@
 const request = require("supertest"); // request with supertest
 const bcrypt = require("bcryptjs"); // bcrypt for hash password
-const app = require("../../../../app"); // app for testing
-const { User } = require("../../../../app/models"); // user model for authentication
+const app = require("../../../app"); // app for testing
+const { User } = require("../../../app/models"); // user model for authentication
 
 describe("GET /v1/auth/whoami", () => {
   // password admin and customer
@@ -20,11 +20,21 @@ describe("GET /v1/auth/whoami", () => {
     encryptedPassword: bcrypt.hashSync(password, 10), // hash of password
     roleId: 1, // admin role 1
   };
+
+  const idUserNotFound = 1000;
   beforeEach(async () => {
     // create user admin and customer befor It
     try {
       await User.create(userAdmin);
       await User.create(userCustomer);
+      const users = await User.findByPk(idUserNotFound);
+      if (users) {
+        await User.destroy({
+          where: {
+            id: idUserNotFound,
+          },
+        });
+      }
     } catch (err) {
       console.error(err.message); // error message
     }

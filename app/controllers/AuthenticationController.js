@@ -35,11 +35,15 @@ class AuthenticationController extends ApplicationController {
       req.user = payload;
       next();
     } catch (err) {
+      let catchErr = null;
+      if (err.details) {
+        catchErr = err.details;
+      }
       res.status(401).json({
         error: {
           name: err.name,
           message: err.message,
-          details: err.details || null,
+          details: catchErr,
         },
       });
     }

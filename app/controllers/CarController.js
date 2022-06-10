@@ -73,7 +73,9 @@ class CarController extends ApplicationController {
       }
       //--
 
-      if (!rentEndedAt) rentEndedAt = this.dayjs(rentStartedAt).add(1, "day");
+      if (!rentEndedAt) {
+        rentEndedAt = this.dayjs(rentStartedAt).add(1, "day");
+      }
 
       const activeRent = await this.userCarModel.findOne({
         where: {
@@ -171,7 +173,10 @@ class CarController extends ApplicationController {
   getListQueryFromRequest(req) {
     const { size, availableAt } = req.query;
     const offset = this.getOffsetFromRequest(req);
-    const limit = req.query.pageSize || 10;
+    let limit = 10;
+    if (req.query.pageSize) {
+      limit = req.query.pageSize;
+    }
     const where = {};
     const include = {
       model: this.userCarModel,

@@ -1,7 +1,7 @@
 const request = require("supertest"); // request with supertest
 const bcrypt = require("bcryptjs"); // bcrypt for hash password
-const app = require("../../../../../app"); // app for testing
-const { User, Car } = require("../../../../../app/models"); // user model for authentication
+const app = require("../../../../app"); // app for testing
+const { User, Car } = require("../../../../app/models"); // user model for authentication
 
 describe("POST /v1/cars/:id/rent", () => {
   //car data

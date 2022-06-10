@@ -1,5 +1,5 @@
 const request = require("supertest"); // request with supertest
-const app = require("../../../../app"); // app for testing
+const app = require("../../../app"); // app for testing
 
 describe("GET /v1/cars", () => {
   const page = 1;

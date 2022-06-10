@@ -1,8 +1,8 @@
 const request = require("supertest");
-const app = require("../../../../app");
+const app = require("../../../app");
 
 //import model user squalize
-const { User } = require("../../../../app/models");
+const { User } = require("../../../app/models");
 
 // import bcryptjs for generating password
 const bcrypt = require("bcryptjs");

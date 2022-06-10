@@ -1,6 +1,4 @@
-const {
-  Model,
-} = require('sequelize');
+const { Model } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
   class Car extends Model {
@@ -11,8 +9,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       this.hasOne(models.UserCar, {
-        foreignKey: 'carId',
-        as: 'userCar',
+        foreignKey: "carId",
+        as: "userCar",
       });
     }
 
@@ -27,18 +25,21 @@ module.exports = (sequelize, DataTypes) => {
     //     updatedAt: this.updatedAt,
     //     rentStartedAt: this.UserCar?.rentStartedAt,
     //     rentEndedAt: this.UserCar?.rentEndedAt,
-    //   }
+    //   };
     // }
   }
-  Car.init({
-    name: DataTypes.STRING,
-    price: DataTypes.FLOAT,
-    size: DataTypes.STRING,
-    image: DataTypes.STRING,
-    isCurrentlyRented: DataTypes.BOOLEAN,
-  }, {
-    sequelize,
-    modelName: 'Car',
-  });
+  Car.init(
+    {
+      name: DataTypes.STRING,
+      price: DataTypes.FLOAT,
+      size: DataTypes.STRING,
+      image: DataTypes.STRING,
+      isCurrentlyRented: DataTypes.BOOLEAN,
+    },
+    {
+      sequelize,
+      modelName: "Car",
+    }
+  );
   return Car;
 };

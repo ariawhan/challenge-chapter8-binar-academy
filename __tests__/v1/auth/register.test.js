@@ -1,6 +1,6 @@
 const request = require("supertest");
-const app = require("../../../../app");
-const { User } = require("../../../../app/models");
+const app = require("../../../app");
+const { User } = require("../../../app/models");
 
 describe("POST /v1/auth/register", () => {
   const user201 = {
