@@ -1,103 +1,123 @@
-const request = require("supertest"); // request with supertest
-const bcrypt = require("bcryptjs"); // bcrypt for hash password
-const app = require("../../../app"); // app for testing
-const { User } = require("../../../app/models"); // user model for authentication
+// request with supertest
+const request = require("supertest");
+// bcrypt for hash password
+const bcrypt = require("bcryptjs");
+// app for testing
+const app = require("../../../app");
+// user model for authentication
+const { User } = require("../../../app/models");
+
+// password admin and customer
+const password = "Hati-hati-dijalan";
+// data admin for authentication to get token admin
+const userAdmin = {
+  name: "Admin Test",
+  email: "admin@mail.test",
+  // hash of password
+  encryptedPassword: bcrypt.hashSync(password, 10),
+  // admin role 2
+  roleId: 2,
+};
+// data customer for authentication to get token customer
+const userCustomer = {
+  name: "Customer Test",
+  email: "customer@mail.test",
+  // hash of password
+  encryptedPassword: bcrypt.hashSync(password, 10),
+  // customer role 1
+  roleId: 1,
+};
 
 describe("GET /v1/auth/whoami", () => {
-  // password admin and customer
-  const password = "Hati-hati-dijalan";
-  // data admin for authentication to get token admin
-  const userAdmin = {
-    name: "Admin Test",
-    email: "admin@mail.test",
-    encryptedPassword: bcrypt.hashSync(password, 10), // hash of password
-    roleId: 2, // admin role 2
-  };
-  // data customer for authentication to get token customer
-  const userCustomer = {
-    name: "Customer Test",
-    email: "customer@mail.test",
-    encryptedPassword: bcrypt.hashSync(password, 10), // hash of password
-    roleId: 1, // admin role 1
-  };
-
-  const idUserNotFound = 1000;
-  beforeEach(async () => {
-    // create user admin and customer befor It
+  beforeAll(async () => {
     try {
+      // create user admin before test
       await User.create(userAdmin);
+      // create user customer before test
       await User.create(userCustomer);
-      const users = await User.findByPk(idUserNotFound);
-      if (users) {
-        await User.destroy({
-          where: {
-            id: idUserNotFound,
-          },
-        });
-      }
     } catch (err) {
-      console.error(err.message); // error message
+      // error message if have error
+      console.error(err.message);
     }
   });
 
-  afterEach(async () => {
-    // delete user admin and customer after it
+  afterAll(async () => {
+    // delete account after test
     try {
+      // delete account admin
       await User.destroy({
         where: {
+          //delete where with email
           email: userAdmin.email,
         },
       });
       await User.destroy({
         where: {
+          //delete where with email
           email: userCustomer.email,
         },
       });
     } catch (err) {
-      console.error(err.message); // error message
+      // error message if have error
+      console.error(err.message);
     }
   });
 
-  // cehcck who am i with admin account
-  it("should response with 401 as status code", async () => {
-    return request(app)
-      .post("/v1/auth/login") // request api login
-      .set("Content-Type", "application/json")
-      .send({ email: userAdmin.email, password: password }) // need email and password for login userAdmin
-      .then((res) => {
-        request(app)
-          .get("/v1/auth/whoami") // request api whoami
-          .set("authorization", "Bearer " + res.body.accessToken) // set authorization jwt
-          .then((res) => {
-            expect(res.statusCode).toBe(401); // check status respond
-            expect(res.body).toEqual({
-              error: {
-                name: "Error",
-                message: "Access forbidden!",
-                details: {
-                  role: "ADMIN",
-                  reason: "ADMIN is not allowed to perform this operation.",
-                },
+  // check test if should response with 401 status code
+  describe("GET should response with 401 as status code", () => {
+    let tokenWhoAmIAdmin;
+    // login before test
+    beforeEach(async () => {
+      await request(app)
+        .post("/v1/auth/login") // request api login
+        .set("Content-Type", "application/json") // set headers
+        .send({ email: userAdmin.email, password: password }) // need email and password for login userAdmin
+        .then((AdminWhoAmILogin) => {
+          tokenWhoAmIAdmin = AdminWhoAmILogin.body.accessToken;
+        });
+    });
+    it("Admin cannot be get who Am I", async () => {
+      return await request(app)
+        .get("/v1/auth/whoami") // request api whoami
+        .set("authorization", "Bearer " + tokenWhoAmIAdmin) // set authorization jwt
+        .then((adminResWhoAmI) => {
+          expect(adminResWhoAmI.statusCode).toBe(401); // check status respond
+          expect(adminResWhoAmI.body).toEqual({
+            error: {
+              name: "Error",
+              message: "Access forbidden!",
+              details: {
+                role: "ADMIN",
+                reason: "ADMIN is not allowed to perform this operation.",
               },
-            });
+            },
           });
-      });
+        });
+    });
   });
-  // cehcck who am i with customer account
-  it("should response with 200 as status code", async () => {
-    return request(app)
-      .post("/v1/auth/login") // request api login
-      .set("Content-Type", "application/json")
-      .send({ email: userCustomer.email, password: password }) // need email and password for login userCustomer
-      .then((res) => {
-        request(app)
-          .get("/v1/auth/whoami") // request api whoami
-          .set("authorization", "Bearer " + res.body.accessToken) // set authorization jwt
-          .then((res) => {
-            expect(res.statusCode).toBe(200); // check status respond
-            expect(res.body.name).toEqual(userCustomer.name); // check name
-            expect(res.body.email).toEqual(userCustomer.email.toLowerCase()); // check email
-          });
-      });
+  describe("GET should respond with 200 as status code", () => {
+    let tokenWhoAmICustomer;
+    // login before test
+    beforeEach(async () => {
+      await request(app)
+        .post("/v1/auth/login") // request api login
+        .set("Content-Type", "application/json") // set headers
+        .send({ email: userCustomer.email, password: password }) // need email and password for login userCustomer
+        .then((CustomerWhoAmILogin) => {
+          tokenWhoAmICustomer = CustomerWhoAmILogin.body.accessToken; // token JWT
+        });
+    });
+    it("Customer access to GET Who Am I", async () => {
+      return await request(app)
+        .get("/v1/auth/whoami") // request api whoami
+        .set("authorization", "Bearer " + tokenWhoAmICustomer) // set authorization jwt
+        .then((customerResWhoAmI) => {
+          expect(customerResWhoAmI.statusCode).toBe(200); // check status respond
+          expect(customerResWhoAmI.body.name).toEqual(userCustomer.name); // check name
+          expect(customerResWhoAmI.body.email).toEqual(
+            userCustomer.email.toLowerCase()
+          ); // check email
+        });
+    });
   });
 });

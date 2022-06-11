@@ -58,7 +58,11 @@ describe("POST /v1/auth/login", () => {
       .send({ email: user200.email, password: password }) // just need email and password
       .then((res) => {
         expect(res.statusCode).toBe(200); // check toBe 200 status response sukses
-        expect(res.body.accesToken).toEqual(res.body.accesToken); // check equal token jWT
+        expect(res.body).toEqual(
+          expect.objectContaining({
+            accessToken: expect.any(String), // check access token with string
+          })
+        );
       });
   });
   it("should response with 401 as status code (passwrod Incorrect)", async () => {
@@ -81,7 +85,7 @@ describe("POST /v1/auth/login", () => {
       .then((res) => {
         expect(res.statusCode).toBe(404); // check toBe 404 status response not found
         expect(res.body.error.details.email).toEqual(
-          emailNotRegistered.toLowerCase()
+          emailNotRegistered.toLowerCase() // cehck email no registered with email not registered
         );
       });
   });
