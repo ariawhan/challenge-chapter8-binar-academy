@@ -24,7 +24,7 @@ describe("POST /v1/auth/login", () => {
   };
 
   // before login create account for test login with before each (berjalan setelah it dibawah belum di jalankan "BEFORE")
-  beforeEach(async () => {
+  beforeAll(async () => {
     // Before login create account data before Login
     await User.create(user200);
     // Before test EMail Not Registered check email in database
@@ -41,7 +41,7 @@ describe("POST /v1/auth/login", () => {
   });
 
   //After Login sukses => delete account test with after each (berjalan setelah it di bawah selesai di jalankan "AFTER")
-  afterEach(async () => {
+  afterAll(async () => {
     // just destroy the account test with squalize
     await User.destroy({
       where: {
