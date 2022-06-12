@@ -1,6 +1,6 @@
-const { Op } = require("sequelize");
-const ApplicationController = require("./ApplicationController");
-const { CarAlreadyRentedError, CarNotFound } = require("../errors");
+const { Op } = require('sequelize');
+const ApplicationController = require('./ApplicationController');
+const { CarAlreadyRentedError, CarNotFound } = require('../errors');
 
 class CarController extends ApplicationController {
   constructor({ carModel, userCarModel, dayjs }) {
@@ -38,10 +38,12 @@ class CarController extends ApplicationController {
 
   handleCreateCar = async (req, res) => {
     try {
-      const { name, price, size, image } = req.body;
-      //update handleCreateCar
-      if (typeof price !== "number") {
-        throw new Error("Price must be number!");
+      const {
+        name, price, size, image,
+      } = req.body;
+      // update handleCreateCar
+      if (typeof price !== 'number') {
+        throw new Error('Price must be number!');
       }
       //
       const car = await this.carModel.create({
@@ -66,19 +68,20 @@ class CarController extends ApplicationController {
   handleRentCar = async (req, res, next) => {
     try {
       const { rentStartedAt } = req.body;
-      let { rentEndedAt } = req.body;
+      const { rentEndedAt } = req.body;
       const car = await this.getCarFromRequest(req.params.id);
 
-      //Update Rent Controllers
-      if (typeof rentStartedAt !== "string") {
-        throw new Error("RentStartedAt must be date!");
+      // Update Rent Controllers
+      if (typeof rentStartedAt !== 'string') {
+        throw new Error('RentStartedAt must be date!');
       }
       if (!car) {
         const err = new CarNotFound(req.params.id);
         res.status(404).json(err);
         return;
       }
-      let rentEnded = this.dayjs(rentStartedAt).add(1, "day");
+      let rentEnded = this.dayjs(rentStartedAt).add(1, 'day');
+
       if (rentEndedAt) {
         rentEnded = rentEnded;
       }
@@ -117,7 +120,7 @@ class CarController extends ApplicationController {
           where: {
             id: req.params.id,
           },
-        }
+        },
       );
 
       res.status(201).json(userCar);
@@ -128,10 +131,12 @@ class CarController extends ApplicationController {
 
   handleUpdateCar = async (req, res) => {
     try {
-      const { name, price, size, image } = req.body;
-      //update handleCreateCar
-      if (typeof price !== "number") {
-        throw new Error("Price must be number!");
+      const {
+        name, price, size, image,
+      } = req.body;
+      // update handleCreateCar
+      if (typeof price !== 'number') {
+        throw new Error('Price must be number!');
       }
       //
       const car = await this.getCarFromRequest(req.params.id);
@@ -147,11 +152,11 @@ class CarController extends ApplicationController {
           where: {
             id: car.id,
           },
-        }
+        },
       );
 
       res.status(201).json({
-        message: "succesfully updated id " + car.id,
+        message: `succesfully updated id ${car.id}`,
         data: await this.getCarFromRequest(req.params.id),
       });
     } catch (err) {
@@ -171,7 +176,7 @@ class CarController extends ApplicationController {
       },
     });
     res.status(200).json({
-      message: "Succesfully delete car id " + req.params.id,
+      message: `Succesfully delete car id ${req.params.id}`,
     });
   };
 
@@ -190,11 +195,11 @@ class CarController extends ApplicationController {
     const where = {};
     const include = {
       model: this.userCarModel,
-      as: "userCar",
+      as: 'userCar',
       required: false,
     };
 
-    //update getListQueryFromRequest
+    // update getListQueryFromRequest
     if (size) {
       where.size = size;
     }

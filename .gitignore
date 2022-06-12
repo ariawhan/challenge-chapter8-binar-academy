@@ -3,3 +3,4 @@ coverage
 junit.xml
 Procfile
 .env
+package-lock.json

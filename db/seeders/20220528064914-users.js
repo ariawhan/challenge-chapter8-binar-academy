@@ -1,18 +1,18 @@
-const { Op } = require("sequelize");
-const bcrypt = require("bcryptjs");
-const { Role } = require("../../app/models");
+const { Op } = require('sequelize');
+const bcrypt = require('bcryptjs');
+const { Role } = require('../../app/models');
 
-const names = ["Johnny", "Fikri", "Brian", "Ranggawarsita", "Jayabaya"];
+const names = ['Johnny', 'Fikri', 'Brian', 'Ranggawarsita', 'Jayabaya'];
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    const password = "123456";
+    const password = '123456';
     const encryptedPassword = bcrypt.hashSync(password, 10);
     const timestamp = new Date();
 
     const role = await Role.findOne({
       where: {
-        name: "ADMIN",
+        name: 'ADMIN',
       },
     });
 
@@ -25,10 +25,10 @@ module.exports = {
       updatedAt: timestamp,
     }));
 
-    await queryInterface.bulkInsert("Users", users, {});
+    await queryInterface.bulkInsert('Users', users, {});
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete("Users", { name: { [Op.in]: names } }, {});
+    await queryInterface.bulkDelete('Users', { name: { [Op.in]: names } }, {});
   },
 };

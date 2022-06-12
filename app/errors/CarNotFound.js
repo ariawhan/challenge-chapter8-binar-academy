@@ -1,13 +1,13 @@
-const ApplicationError = require("./ApplicationError");
+const ApplicationError = require('./ApplicationError');
 
 class CarNotFound extends ApplicationError {
   constructor(carId) {
-    super("Not found car!");
+    super('Not found car!');
     this.carId = carId;
   }
 
   get details() {
-    return { message: "Not found car id " + this.carId };
+    return { message: `Not found car id ${this.carId}` };
   }
 }
 

@@ -1,10 +1,10 @@
-const { NotFoundError } = require("../errors");
+const { NotFoundError } = require('../errors');
 
 class ApplicationController {
   handleGetRoot = (req, res) => {
     res.status(200).json({
-      status: "OK",
-      message: "BCR API is up and running!",
+      status: 'OK',
+      message: 'BCR API is up and running!',
     });
   };
 
@@ -18,10 +18,11 @@ class ApplicationController {
       },
     });
   };
+
   // Update Adding next
   handleError = (err, req, res, next) => {
     // update details
-    let details = err.details;
+    let { details } = err;
     if (!err.details) {
       details = null;
     }
@@ -29,7 +30,7 @@ class ApplicationController {
       error: {
         name: err.name,
         message: err.message,
-        details: details,
+        details,
       },
     });
   };

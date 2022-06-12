@@ -1,15 +1,17 @@
-const ApplicationController = require("./ApplicationController");
+const ApplicationController = require('./ApplicationController');
 const {
   EmailNotRegisteredError,
   InsufficientAccessError,
   RecordNotFoundError,
   WrongPasswordError,
   EmailAlreadyTakenError,
-} = require("../errors");
-const { JWT_SIGNATURE_KEY } = require("../../config/application");
+} = require('../errors');
+const { JWT_SIGNATURE_KEY } = require('../../config/application');
 
 class AuthenticationController extends ApplicationController {
-  constructor({ userModel, roleModel, bcrypt, jwt }) {
+  constructor({
+    userModel, roleModel, bcrypt, jwt,
+  }) {
     super();
     this.userModel = userModel;
     this.roleModel = roleModel;
@@ -18,14 +20,14 @@ class AuthenticationController extends ApplicationController {
   }
 
   accessControl = {
-    PUBLIC: "PUBLIC",
-    ADMIN: "ADMIN",
-    CUSTOMER: "CUSTOMER",
+    PUBLIC: 'PUBLIC',
+    ADMIN: 'ADMIN',
+    CUSTOMER: 'CUSTOMER',
   };
 
   authorize = (rolename) => async (req, res, next) => {
     try {
-      const token = req.headers.authorization?.split("Bearer ")[1];
+      const token = req.headers.authorization?.split('Bearer ')[1];
       const payload = await this.decodeToken(token);
       if (!!rolename && rolename !== payload.role.name) {
         throw new InsufficientAccessError(payload?.role?.name);
@@ -52,14 +54,14 @@ class AuthenticationController extends ApplicationController {
     try {
       const email = req.body.email.toLowerCase();
       // Update handleLogin valid email
-      let emailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      const emailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
       if (!email.match(emailformat)) {
-        throw new Error("Invalid email Format!");
+        throw new Error('Invalid email Format!');
       }
       const { password } = req.body;
       const user = await this.userModel.findOne({
         where: { email },
-        include: [{ model: this.roleModel, attributes: ["id", "name"] }],
+        include: [{ model: this.roleModel, attributes: ['id', 'name'] }],
       });
 
       if (!user) {
@@ -69,7 +71,7 @@ class AuthenticationController extends ApplicationController {
       }
       const isPasswordCorrect = await this.verifyPassword(
         password,
-        user.encryptedPassword
+        user.encryptedPassword,
       );
 
       if (!isPasswordCorrect) {
@@ -92,9 +94,9 @@ class AuthenticationController extends ApplicationController {
       const { name } = req.body;
       const email = req.body.email.toLowerCase();
       // Update handleLogin valid email
-      let emailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      const emailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
       if (!email.match(emailformat)) {
-        throw new Error("Invalid email Format!");
+        throw new Error('Invalid email Format!');
       }
       const { password } = req.body;
       const existingUser = await this.userModel.findOne({ where: { email } });
@@ -127,8 +129,7 @@ class AuthenticationController extends ApplicationController {
   };
 
   handleGetUser = async (req, res) => {
-    const user = await this.userModel.findByPk(parseInt(req.user.id));
-    console.log(req.user.id);
+    const user = await this.userModel.findByPk(req.user.id);
     if (!user) {
       const err = new RecordNotFoundError(req.user.name);
       res.status(404).json(err);
@@ -136,7 +137,6 @@ class AuthenticationController extends ApplicationController {
     }
 
     const role = await this.roleModel.findByPk(user.roleId);
-    console.log(role);
     if (!role) {
       const err = new RecordNotFoundError(user.roleId);
       res.status(404).json(err);
@@ -146,33 +146,26 @@ class AuthenticationController extends ApplicationController {
     res.status(200).json(user);
   };
 
-  createTokenFromUser = async (user, role) => {
-    return await this.jwt.sign(
-      {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        image: user.image,
-        role: {
-          id: role.id,
-          name: role.name,
-        },
+  createTokenFromUser = async (user, role) => await this.jwt.sign(
+    {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      image: user.image,
+      role: {
+        id: role.id,
+        name: role.name,
       },
-      process.env.JWT_SIGNATURE_KEY
-    );
-  };
+    },
+    process.env.JWT_SIGNATURE_KEY,
+  );
 
-  decodeToken = async (token) => {
-    return await this.jwt.verify(token, process.env.JWT_SIGNATURE_KEY);
-  };
+  decodeToken = async (token) => await this.jwt.verify(token, process.env.JWT_SIGNATURE_KEY);
 
-  encryptPassword = async (password) => {
-    return await this.bcrypt.hashSync(password, 10);
-  };
+  encryptPassword = async (password) => await this.bcrypt.hashSync(password, 10);
 
   verifyPassword = async (password, encryptedPassword) => {
-    // console.log(password, encryptedPassword);
-    return await this.bcrypt.compareSync(password, encryptedPassword);
+    await this.bcrypt.compareSync(password, encryptedPassword);
   };
 }
 
