@@ -73,7 +73,6 @@ class AuthenticationController extends ApplicationController {
         password,
         user.encryptedPassword,
       );
-
       if (!isPasswordCorrect) {
         const err = new WrongPasswordError();
         res.status(401).json(err);
@@ -164,9 +163,9 @@ class AuthenticationController extends ApplicationController {
 
   encryptPassword = async (password) => await this.bcrypt.hashSync(password, 10);
 
-  verifyPassword = async (password, encryptedPassword) => {
-    await this.bcrypt.compareSync(password, encryptedPassword);
-  };
+  async verifyPassword(password, encryptedPassword) {
+    return await this.bcrypt.compareSync(password, encryptedPassword);
+  }
 }
 
 module.exports = AuthenticationController;
