@@ -10,7 +10,6 @@ class ApplicationController {
 
   handleNotFound = (req, res) => {
     const err = new NotFoundError(req.method, req.url);
-
     res.status(404).json({
       error: {
         name: err.name,
@@ -19,13 +18,18 @@ class ApplicationController {
       },
     });
   };
-
-  handleError = (err, req, res) => {
+  // Update Adding next
+  handleError = (err, req, res, next) => {
+    // update details
+    let details = err.details;
+    if (!err.details) {
+      details = null;
+    }
     res.status(500).json({
       error: {
         name: err.name,
         message: err.message,
-        details: err.details || null,
+        details: details,
       },
     });
   };

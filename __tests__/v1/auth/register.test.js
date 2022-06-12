@@ -20,6 +20,13 @@ describe("POST /v1/auth/register", () => {
     password: "ariawhan",
     roleId: 2,
   };
+  //account for test 500 Email Invalid
+  const user500 = {
+    name: "user500",
+    email: "user500gmail.com",
+    password: "ariawhan",
+    roleId: 2,
+  };
   // before each create account to test Email Already Taken
   beforeEach(async () => {
     // Create account with model user
@@ -66,6 +73,16 @@ describe("POST /v1/auth/register", () => {
         expect(res.body.error.details.email.toLowerCase()).toEqual(
           user422.email.toLowerCase() // check email taken with email user422
         );
+      });
+  });
+  it("should response with 500 as status code (Email Format Invalid))", async () => {
+    return await request(app)
+      .post("/v1/auth/register") // Api register
+      .set("Content-Type", "application/json") // set header with type body json
+      .send(user500) // send bosy with acc user 201
+      .then((res) => {
+        expect(res.statusCode).toBe(500); // check toBe 404 status response not found
+        expect(res.body.error.message).toEqual("Invalid email Format!"); // check error message
       });
   });
 });

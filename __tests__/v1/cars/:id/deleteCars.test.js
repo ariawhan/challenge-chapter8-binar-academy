@@ -20,14 +20,14 @@ describe("GET /v1/cars/:id", () => {
   // data admin for authentication to get token admin
   const userAdmin = {
     name: "Admin Delete Test",
-    email: "admindelete@mail.test",
+    email: "admindelete@mail.com",
     encryptedPassword: bcrypt.hashSync(password, 10), // hash of password
     roleId: 2, // admin role 2
   };
   // data customer for authentication to get token customer
   const userCustomer = {
     name: "Customer Delete Test",
-    email: "customerdelete@mail.test",
+    email: "customerdelete@mail.com",
     encryptedPassword: bcrypt.hashSync(password, 10), // hash of password
     roleId: 1, // admin role 1
   };

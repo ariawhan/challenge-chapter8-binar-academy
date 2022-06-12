@@ -11,6 +11,7 @@ describe("POST /v1/auth/login", () => {
   // test data
   const emailForLogin = "userlogin200@test.com"; // for testing login
   const emailNotRegistered = "emailNotRegistered@test.com"; // for testing Email Not Register
+  const emailFormatInvalid = "emailformatInvalidtest.com"; // for testing Email Format Invalid
   const password = "safiratyas";
   const passwordInCorrect = "PasswordNotCorrect";
   const passwordBcrypt = bcrypt.hashSync(password, 10);
@@ -52,7 +53,7 @@ describe("POST /v1/auth/login", () => {
 
   // If data sukses create, now create test jest login
   it("should response with 200 as status code (Suksess login)", async () => {
-    return request(app)
+    return await request(app)
       .post("/v1/auth/login") // method post and url rounter login
       .set("Content-Type", "application/json") // set headers with content type json
       .send({ email: user200.email, password: password }) // just need email and password
@@ -66,7 +67,7 @@ describe("POST /v1/auth/login", () => {
       });
   });
   it("should response with 401 as status code (passwrod Incorrect)", async () => {
-    return request(app)
+    return await request(app)
       .post("/v1/auth/login") // method post and url rounter login
       .set("Content-Type", "application/json") // set headers with content type json
       .send({ email: user200.email, password: passwordInCorrect }) // just need email and password incorect
@@ -78,7 +79,7 @@ describe("POST /v1/auth/login", () => {
       });
   });
   it("should response with 404 as status code (Email Not Registered)", async () => {
-    return request(app)
+    return await request(app)
       .post("/v1/auth/login") // method post and url rounter login
       .set("Content-Type", "application/json") // set headers with content type json
       .send({ email: emailNotRegistered, password: password }) // just need email not registered and random password
@@ -87,6 +88,16 @@ describe("POST /v1/auth/login", () => {
         expect(res.body.error.details.email).toEqual(
           emailNotRegistered.toLowerCase() // cehck email no registered with email not registered
         );
+      });
+  });
+  it("should response with 500 as status code (Email Format Invalid)", async () => {
+    return await request(app)
+      .post("/v1/auth/login") // method post and url rounter login
+      .set("Content-Type", "application/json") // set headers with content type json
+      .send({ email: emailFormatInvalid, password: password }) // just need email not registered and random password
+      .then((res) => {
+        expect(res.statusCode).toBe(500); // check toBe 404 status response not found
+        expect(res.body.error.message).toEqual("Invalid email Format!"); // check error message
       });
   });
 });

@@ -12,6 +12,14 @@ describe("GET /v1/cars/:id", () => {
     image: "https://source.unsplash.com/502x502",
     isCurrentlyRented: false,
   };
+  //car price invalid
+  const carDataUpdateInvalid = {
+    name: "Rush 2018",
+    price: "seratusRibu",
+    size: "SMALL",
+    image: "https://source.unsplash.com/502x502",
+    isCurrentlyRented: false,
+  };
 
   //car data for update
   const carUpdate = {
@@ -28,14 +36,14 @@ describe("GET /v1/cars/:id", () => {
   // data admin for authentication to get token admin
   const userAdmin = {
     name: "Admin Update Test",
-    email: "adminupdate@mail.test",
+    email: "adminupdate@mail.com",
     encryptedPassword: bcrypt.hashSync(password, 10), // hash of password
     roleId: 2, // admin role 2
   };
   // data customer for authentication to get token customer
   const userCustomer = {
     name: "Customer Update Test",
-    email: "customerupdate@mail.test",
+    email: "customerupdate@mail.com",
     encryptedPassword: bcrypt.hashSync(password, 10), // hash of password
     roleId: 1, // admin role 1
   };
@@ -115,6 +123,24 @@ describe("GET /v1/cars/:id", () => {
             await expect(updateCar.body.data.price).toEqual(carUpdate.price);
             await expect(updateCar.body.data.size).toEqual(carUpdate.size);
             await expect(updateCar.body.data.image).toEqual(carUpdate.image);
+          });
+      });
+  });
+  it("should response with 422 as status code price car invalid", async () => {
+    return await request(app)
+      .post("/v1/auth/login") // request api login
+      .set("Content-Type", "application/json")
+      .send({ email: userAdmin.email, password: password }) // need email and password for login userCustomer
+      .then(async (res) => {
+        await request(app)
+          .put("/v1/cars/" + idCarsUpdate) // request api create cars
+          .set("authorization", "Bearer " + res.body.accessToken) // set authorization jwt
+          .send(carDataUpdateInvalid)
+          .then(async (updateCar) => {
+            await expect(updateCar.statusCode).toBe(422); // check status respond
+            expect(updateCar.body.error.message).toEqual(
+              "Price must be number!"
+            );
           });
       });
   });

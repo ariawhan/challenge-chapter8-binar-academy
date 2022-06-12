@@ -6,13 +6,15 @@ const bcrypt = require("bcryptjs");
 const app = require("../../../app");
 // user model for authentication
 const { User } = require("../../../app/models");
+// import contorller auth
+const { AuthenticationController } = require("../../../app/controllers");
 
 // password admin and customer
 const password = "Hati-hati-dijalan";
 // data admin for authentication to get token admin
 const userAdmin = {
   name: "Admin Test",
-  email: "admin@mail.test",
+  email: "admin@mail.com",
   // hash of password
   encryptedPassword: bcrypt.hashSync(password, 10),
   // admin role 2
@@ -21,7 +23,7 @@ const userAdmin = {
 // data customer for authentication to get token customer
 const userCustomer = {
   name: "Customer Test",
-  email: "customer@mail.test",
+  email: "customer@mail.com",
   // hash of password
   encryptedPassword: bcrypt.hashSync(password, 10),
   // customer role 1
@@ -118,6 +120,86 @@ describe("GET /v1/auth/whoami", () => {
             userCustomer.email.toLowerCase()
           ); // check email
         });
+    });
+  });
+});
+
+// check user not found and role not found
+describe("#handleGetUser", () => {
+  // data user not found
+  const userNotFound = {
+    user: {
+      id: 1000,
+      name: "User Not Found Test",
+      email: "usernotFound@mail.com",
+      role: { id: 1, name: "CUSTOMER" },
+    },
+  };
+  beforeEach(async () => {
+    // before test delete user id not found
+    try {
+      const checkUserNotFound = await User.findByPk(userNotFound.id);
+      if (checkUserNotFound) {
+        await User.destroy({
+          where: {
+            //delete where with id
+            id: userNotFound.id,
+          },
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  });
+  // get test status code 404 error
+  describe("GET should response with 404 as status code", () => {
+    // id users after create users
+    let UserRoleNotFound = {
+      id: 3000,
+      roleId: 10,
+    };
+    // create user Role Not Found Test
+    it("User not found", async () => {
+      // create model
+      const mockAuthModel = {};
+      mockAuthModel.findByPk = jest.fn();
+      // create respond
+      const mockResponse = {};
+      mockResponse.status = jest.fn().mockReturnThis();
+      mockResponse.json = jest.fn().mockReturnThis();
+      // declaration class auth controller with constructor uderModel
+      const authController = new AuthenticationController({
+        userModel: mockAuthModel,
+      });
+      // execution with request and response
+      await authController.handleGetUser(userNotFound, mockResponse);
+      expect(mockResponse.status).toHaveBeenCalledWith(404);
+      expect(mockResponse.json).toHaveBeenCalledWith(expect.anything());
+    });
+    it("Role not found", async () => {
+      // create model
+      const mockTask = new User(UserRoleNotFound);
+      console.log(mockTask);
+      const mockAuthModel = {};
+      mockAuthModel.findByPk = jest.fn().mockReturnValue(mockTask);
+      const mockAuthModelRole = {};
+      mockAuthModelRole.findByPk = jest.fn();
+      // create respond
+      const mockResponse = {};
+      mockResponse.status = jest.fn().mockReturnThis();
+      mockResponse.json = jest.fn().mockReturnThis();
+      // declaration class auth controller with constructor uderModel
+      const authController = new AuthenticationController({
+        roleModel: mockAuthModelRole,
+        userModel: mockAuthModel,
+      });
+      // execution with request and response
+      await authController.handleGetUser(
+        { user: { id: UserRoleNotFound.id } },
+        mockResponse
+      );
+      expect(mockResponse.status).toHaveBeenCalledWith(404);
+      expect(mockResponse.json).toHaveBeenCalledWith(expect.anything());
     });
   });
 });

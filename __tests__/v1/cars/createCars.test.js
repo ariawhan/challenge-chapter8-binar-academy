@@ -12,6 +12,14 @@ describe("GET /v1/cars", () => {
     image: "https://source.unsplash.com/502x502",
     isCurrentlyRented: false,
   };
+  // data car price not number
+  const carDataInvalid = {
+    name: "Rush 2019",
+    price: "limaribu",
+    size: "SMALL",
+    image: "https://source.unsplash.com/502x502",
+    isCurrentlyRented: false,
+  };
 
   let idCars = "";
 
@@ -20,14 +28,14 @@ describe("GET /v1/cars", () => {
   // data admin for authentication to get token admin
   const userAdmin = {
     name: "Admin Create Cars Test",
-    email: "admincreatecars@mail.test",
+    email: "admincreatecars@mail.com",
     encryptedPassword: bcrypt.hashSync(password, 10), // hash of password
     roleId: 2, // admin role 2
   };
   // data customer for authentication to get token customer
   const userCustomer = {
     name: "Customer Create Cars Test",
-    email: "customercreatecars@mail.test",
+    email: "customercreatecars@mail.com",
     encryptedPassword: bcrypt.hashSync(password, 10), // hash of password
     roleId: 1, // admin role 1
   };
@@ -109,6 +117,22 @@ describe("GET /v1/cars", () => {
               carData.isCurrentlyRented
             );
             idCars = res.body.id;
+          });
+      });
+  });
+  it("should response with 422 as status code price must be number", async () => {
+    return request(app)
+      .post("/v1/auth/login") // request api login
+      .set("Content-Type", "application/json")
+      .send({ email: userAdmin.email, password: password }) // need email and password for login userCustomer
+      .then((res) => {
+        request(app)
+          .post("/v1/cars") // request api create cars
+          .set("authorization", "Bearer " + res.body.accessToken) // set authorization jwt
+          .send(carDataInvalid)
+          .then((res2) => {
+            expect(res2.statusCode).toBe(422); // check status respond
+            expect(res2.body.error.message).toEqual("Price must be number!");
           });
       });
   });

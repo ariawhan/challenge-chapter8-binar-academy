@@ -18,6 +18,11 @@ describe("POST /v1/cars/:id/rent", () => {
     rentStartedAt: "2022-06-09T15:44:03.156Z",
     rentEndedAt: "2022-06-09T15:44:03.156Z",
   };
+  //car data for rent cars invalid
+  const rentDataInvalid = {
+    rentStartedAt: 2022,
+    rentEndedAt: "2022-06-09T15:44:03.156Z",
+  };
 
   let idCarsRent = 0;
 
@@ -28,7 +33,7 @@ describe("POST /v1/cars/:id/rent", () => {
   // data admin for authentication to get token admin
   const userRentAdmin = {
     name: "Admin Rent Test",
-    email: "adminrent@mail.test",
+    email: "adminrent@mail.com",
     encryptedPassword: bcrypt.hashSync(password, 10), // hash of password
     roleId: 2, // admin role 2
   };
@@ -154,6 +159,24 @@ describe("POST /v1/cars/:id/rent", () => {
                   "Car is already rented!!"
                 );
               });
+          });
+      });
+  });
+  it("should response with 500 as status code (invalid format)", async () => {
+    return await request(app)
+      .post("/v1/auth/login") // request api login
+      .set("Content-Type", "application/json")
+      .send({ email: userRentCustomerRent.email, password: password }) // need email and password for login userCustomer
+      .then(async (res) => {
+        await request(app)
+          .post("/v1/cars/" + idCarsRent + "/rent") // request api create cars
+          .set("authorization", "Bearer " + res.body.accessToken) // set authorization jwt
+          .send(rentDataInvalid)
+          .then(async (notFoundCarsRent) => {
+            await expect(notFoundCarsRent.statusCode).toBe(500); // check status respond
+            await expect(notFoundCarsRent.body.error.message).toEqual(
+              "RentStartedAt must be date!"
+            ); // check status respond
           });
       });
   });

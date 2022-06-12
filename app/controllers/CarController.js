@@ -39,7 +39,11 @@ class CarController extends ApplicationController {
   handleCreateCar = async (req, res) => {
     try {
       const { name, price, size, image } = req.body;
-
+      //update handleCreateCar
+      if (typeof price !== "number") {
+        throw new Error("Price must be number!");
+      }
+      //
       const car = await this.carModel.create({
         name,
         price,
@@ -66,16 +70,19 @@ class CarController extends ApplicationController {
       const car = await this.getCarFromRequest(req.params.id);
 
       //Update Rent Controllers
+      if (typeof rentStartedAt !== "string") {
+        throw new Error("RentStartedAt must be date!");
+      }
       if (!car) {
         const err = new CarNotFound(req.params.id);
         res.status(404).json(err);
         return;
       }
-      //--
-
-      if (!rentEndedAt) {
-        rentEndedAt = this.dayjs(rentStartedAt).add(1, "day");
+      let rentEnded = this.dayjs(rentStartedAt).add(1, "day");
+      if (rentEndedAt) {
+        rentEnded = rentEnded;
       }
+      //--
 
       const activeRent = await this.userCarModel.findOne({
         where: {
@@ -88,7 +95,6 @@ class CarController extends ApplicationController {
           },
         },
       });
-      console.log(activeRent);
 
       if (activeRent) {
         const err = new CarAlreadyRentedError(car);
@@ -123,7 +129,11 @@ class CarController extends ApplicationController {
   handleUpdateCar = async (req, res) => {
     try {
       const { name, price, size, image } = req.body;
-
+      //update handleCreateCar
+      if (typeof price !== "number") {
+        throw new Error("Price must be number!");
+      }
+      //
       const car = await this.getCarFromRequest(req.params.id);
       const newCar = await this.carModel.update(
         {
@@ -184,7 +194,11 @@ class CarController extends ApplicationController {
       required: false,
     };
 
-    if (size) where.size = size;
+    //update getListQueryFromRequest
+    if (size) {
+      where.size = size;
+    }
+
     if (availableAt) {
       include.where = {
         rentEndedAt: {

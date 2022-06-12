@@ -26,4 +26,25 @@ describe("GET /v1/cars", () => {
         // );
       });
   });
+  it("should response with 200 as status code (sukses get list cars)", async () => {
+    return request(app)
+      .get("/v1/cars?size=SMALL&availableAt=2022-06-11T16:06:28.559Z") // request api get cars with page in quary
+      .then((res) => {
+        expect(res.statusCode).toBe(200);
+        // expect(res.body.cars).toEqual(
+        //   expect.arrayContaining([
+        //     expect.objectContaining({
+        //       id,
+        //       price,
+        //       size,
+        //       image,
+        //       isCurrentlyRented,
+        //       createdAt,
+        //       updatedAt,
+        //       userCar,
+        //     }),
+        //   ])
+        // );
+      });
+  });
 });

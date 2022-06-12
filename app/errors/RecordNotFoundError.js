@@ -1,4 +1,4 @@
-const ApplicationError = require('./ApplicationError');
+const ApplicationError = require("./ApplicationError");
 
 class RecordNotFoundError extends ApplicationError {
   constructor(name) {
