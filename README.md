@@ -27,9 +27,9 @@ To install all package modules use :
 To install database :
 
 ```
-& npm db:create
-& npm db:migrate
-& npm db:seed
+& npm run db:create
+& npm run db:migrate
+& npm run db:seed
 ```
 
 To run application use :
