@@ -6,7 +6,7 @@ to lean Eslint, NestJs, Deployment CI/CD, Media Handling, WebSocket, Unit Testin
 ## Applications Deployment Url
 [Challenge Chapter 8 Production](https://challenge-ch8-ariawan-binar.herokuapp.com)
 
-#### testing by
+#### Testing by
 
 - [Ariawhan](https://gitlab.com/Ariawhan)
 
@@ -22,7 +22,6 @@ To install all package modules use :
 
 ```
 & npm install
-
 ```
 
 To install database :
@@ -31,7 +30,6 @@ To install database :
 & npm db:create
 & npm db:migrate
 & npm db:seed
-
 ```
 
 To run application use :
@@ -39,19 +37,16 @@ To run application use :
 ```
 & npm run start
 & npm run develop
-
 ```
 
 To testing application use :
 
 ```
 & npm run test
-
 ```
 
 To eslint check application use :
 
 ```
 & npm run lint
-
 ```
