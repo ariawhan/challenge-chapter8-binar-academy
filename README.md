@@ -1,6 +1,6 @@
 # Challenge Chapter 8 Binar Academy
 
-This project challenge chapter 7 from Binar Academy
+This project challenge chapter 8 from Binar Academy
 to lean Eslint, NestJs, Deployment CI/CD, Media Handling, WebSocket, Unit Testing and TDD
 
 ## Applications Deployment Url
