@@ -21,22 +21,17 @@ describe('GET /v1/cars/:id', () => {
     await Car.destroy({ where: { id: carAfterCreate.id } });
   });
 
-  it('should response with 200 as status code (sukses get cars)', async () => request(app)
+  it('should response with 200 as status code (sukses get cars)', async () => await request(app)
     .get(`/v1/cars/${carAfterCreate.id}`) // request api get cars with page in quary
     .then((res) => {
       expect(res.statusCode).toBe(200);
-      // expect(res.body.cars).toEqual(
-      //   expect.arrayContaining([
-      //     expect.objectContaining({
-      //       price,
-      //       size,
-      //       image,
-      //       isCurrentlyRented,
-      //       createdAt,
-      //       updatedAt,
-      //       userCar,
-      //     }),
-      //   ])
-      // );
+      expect(res.body).toEqual(
+        expect.objectContaining({
+          createdAt: expect.any(String),
+          id: expect.any(Number),
+          image: expect.any(String),
+          name: expect.any(String),
+        }),
+      );
     }));
 });

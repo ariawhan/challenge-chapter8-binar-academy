@@ -63,7 +63,7 @@ describe('GET /v1/cars/:id', () => {
     }
   });
 
-  it('should response with 401 as status code (userCustomer cannot be delete car)', async () => request(app)
+  it('should response with 401 as status code (userCustomer cannot be delete car)', async () => await request(app)
     .post('/v1/auth/login') // request api login
     .set('Content-Type', 'application/json')
     .send({ email: userCustomer.email, password }) // need email and password for login userCustomer
@@ -85,7 +85,7 @@ describe('GET /v1/cars/:id', () => {
           }); // check error Access forbidden
         });
     }));
-  it('should response with 200 as status code sukses delete cars by admin', async () => request(app)
+  it('should response with 200 as status code sukses delete cars by admin', async () => await request(app)
     .post('/v1/auth/login') // request api login
     .set('Content-Type', 'application/json')
     .send({ email: userAdmin.email, password }) // need email and password for login userCustomer
